@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   Uint8 *keystate;
   Uint32 next_frame, now;
 
-  float theta, t, x, y, xn, yn;
+  float theta, t, taccel, tvel, tdrag, x, y, xn, yn;
 
   int running;
 
@@ -47,6 +47,8 @@ int main(int argc, char **argv) {
   /* Game Logic */
   running = 1;
   t = M_PI_4;
+  tdrag = 63/64.0;
+  taccel = 4;
 
   SDL_LockSurface(sdl_surface);
   while (running) {
@@ -103,11 +105,14 @@ int main(int argc, char **argv) {
       running = 0;
     }
     if (keystate[SDLK_LEFT]) {
-      t = t + M_PI / fps;
+      tvel = tvel + taccel*2*M_PI / fps;
     }
     if (keystate[SDLK_RIGHT]) {
-      t = t - M_PI / fps;
+      tvel = tvel - taccel*2*M_PI / fps;
     }
+
+    t = t + tvel / fps;
+    tvel = tvel * pow(1.0 - tdrag, 1.0/fps);
 
   }
   SDL_UnlockSurface(sdl_surface);
