@@ -4,6 +4,9 @@
 #include <math.h>
 
 int fps = 15;
+int w = 320;
+int h = 240;
+float scale = 8.0;
 
 int main(int argc, char **argv) {
   SDL_Surface *sdl_surface;
@@ -14,10 +17,12 @@ int main(int argc, char **argv) {
   Uint8 *keystate;
   Uint32 next_frame, now;
 
+  float theta;
+
   int running;
 
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
-  SDL_SetVideoMode(320, 240, 32, 0);
+  SDL_SetVideoMode(w, h, 32, 0);
   sdl_surface = SDL_GetVideoSurface();
 
   surface = cairo_image_surface_create_for_data(
@@ -30,7 +35,12 @@ int main(int argc, char **argv) {
   cr = cairo_create(surface);
   cairo_surface_destroy(surface);
 
-  next_frame = 1024.0L / fps;
+  cairo_scale(cr, 1, -1);
+  cairo_translate(cr, w/2.0, -h/2.0);
+
+  cairo_scale(cr, h/scale, h/scale);
+
+  next_frame = 1024.0 / fps;
   running = 1;
 
   SDL_LockSurface(sdl_surface);
@@ -40,6 +50,17 @@ int main(int argc, char **argv) {
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+
+    theta = 2*M_PI * (0/3.0);
+    cairo_move_to( cr, sin(theta), cos(theta) );
+    theta = 2*M_PI * (1/3.0);
+    cairo_line_to( cr, sin(theta), cos(theta) );
+    theta = 2*M_PI * (2/3.0);
+    cairo_line_to( cr, sin(theta), cos(theta) );
+    cairo_close_path(cr);
+
+    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+    cairo_fill(cr);
 
     /* Update Display */
     SDL_UnlockSurface(sdl_surface);
@@ -51,7 +72,7 @@ int main(int argc, char **argv) {
     if (now < next_frame) {
       SDL_Delay( next_frame - SDL_GetTicks() );
     }
-    next_frame = next_frame + 1024.0L / fps;
+    next_frame = next_frame + 1024.0 / fps;
 
     /* Game Logic */
     SDL_PumpEvents();
