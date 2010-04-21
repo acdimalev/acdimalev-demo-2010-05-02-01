@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-int fps = 15;
+int fps = 30;
 int w = 320;
 int h = 240;
 float scale = 8.0;
@@ -101,6 +101,12 @@ int main(int argc, char **argv) {
     keystate = SDL_GetKeyState(NULL);
     if (keystate[SDLK_q]) {
       running = 0;
+    }
+    if (keystate[SDLK_LEFT]) {
+      t = t + M_PI / fps;
+    }
+    if (keystate[SDLK_RIGHT]) {
+      t = t - M_PI / fps;
     }
 
   }
