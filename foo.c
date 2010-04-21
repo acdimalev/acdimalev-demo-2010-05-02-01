@@ -17,8 +17,10 @@ int main(int argc, char **argv) {
   Uint8 *keystate;
   Uint32 next_frame, now;
 
-  float theta, t, taccel, tvel, tdrag, x, y;
-  float accel, xvel, yvel, drag;
+  float theta, t, taccel, tvel, tdrag;
+  float accel, drag;
+
+  float pos[3], vel[3];
 
   float vertx, verty, tempx, tempy;
 
@@ -50,7 +52,8 @@ int main(int argc, char **argv) {
   /* Game Logic */
   running = 1;
   t = M_PI_4;
-  x = 1; y = 1;
+  pos[0] = 1; pos[1] = 1; pos[2] = 0;
+  vel[0] = 0; vel[1] = 0; vel[2] = 0;
   taccel = 4;
   tdrag = 63/64.0;
   accel = 1 << 7;
@@ -65,34 +68,34 @@ int main(int argc, char **argv) {
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
     theta = 2*M_PI * (0/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_move_to(cr, vertx, verty);
     theta = 2*M_PI * (1/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_line_to(cr, vertx, verty);
     theta = 2*M_PI * (2/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_line_to(cr, vertx, verty);
     cairo_close_path(cr);
 
     theta = 2*M_PI * (1/3.0); tempx =  0.1; tempy = cos(theta) / 2.0;
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_move_to(cr, vertx, verty);
     theta = 2*M_PI * (1/3.0); tempx = -0.1; tempy = cos(theta) / 2.0;
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_line_to(cr, vertx, verty);
     theta = 2*M_PI * (1/3.0); tempx = -0.1; tempy = cos(theta);
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_line_to(cr, vertx, verty);
     theta = 2*M_PI * (1/3.0); tempx =  0.1; tempy = cos(theta);
-    vertx = x + tempx*cos(t) - tempy*sin(t);
-    verty = y + tempx*sin(t) + tempy*cos(t);
+    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
+    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
     cairo_line_to(cr, vertx, verty);
     cairo_close_path(cr);
 
@@ -124,16 +127,16 @@ int main(int argc, char **argv) {
       tvel = tvel - taccel*2*M_PI / fps;
     }
     if (keystate[SDLK_UP]) {
-      xvel = accel * -sin(t) / fps;
-      yvel = accel * cos(t) / fps;
+      vel[0] = accel * -sin(t) / fps;
+      vel[1] = accel * cos(t) / fps;
     }
 
     t = t + tvel / fps;
-    x = x + xvel / fps;
-    y = y + yvel / fps;
+    pos[0] = pos[0] + vel[0] / fps;
+    pos[1] = pos[1] + vel[1] / fps;
     tvel = tvel * pow(1.0 - tdrag, 1.0/fps);
-    xvel = xvel * pow(1.0 - drag, 1.0/fps);
-    yvel = yvel * pow(1.0 - drag, 1.0/fps);
+    vel[0] = vel[0] * pow(1.0 - drag, 1.0/fps);
+    vel[1] = vel[1] * pow(1.0 - drag, 1.0/fps);
 
   }
   SDL_UnlockSurface(sdl_surface);
