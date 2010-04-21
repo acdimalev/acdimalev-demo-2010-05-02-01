@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   Uint8 *keystate;
   Uint32 next_frame, now;
 
-  float theta;
+  float theta, t, x, y, xn, yn;
 
   int running;
 
@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
   SDL_SetVideoMode(w, h, 32, 0);
   sdl_surface = SDL_GetVideoSurface();
 
+  /* Initialize Canvas */
   surface = cairo_image_surface_create_for_data(
     sdl_surface->pixels,
     CAIRO_FORMAT_RGB24,
@@ -40,8 +41,12 @@ int main(int argc, char **argv) {
 
   cairo_scale(cr, h/scale, h/scale);
 
+  /* Initialize Delay */
   next_frame = 1024.0 / fps;
+
+  /* Game Logic */
   running = 1;
+  t = M_PI_4;
 
   SDL_LockSurface(sdl_surface);
   while (running) {
@@ -51,19 +56,29 @@ int main(int argc, char **argv) {
     cairo_paint(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
-    theta = 2*M_PI * (0/3.0);
-    cairo_move_to( cr, sin(theta), cos(theta) );
-    theta = 2*M_PI * (1/3.0);
-    cairo_line_to( cr, sin(theta), cos(theta) );
-    theta = 2*M_PI * (2/3.0);
-    cairo_line_to( cr, sin(theta), cos(theta) );
+    theta = 2*M_PI * (0/3.0); x = sin(theta); y = cos(theta);
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_move_to(cr, xn, yn);
+    theta = 2*M_PI * (1/3.0); x = sin(theta); y = cos(theta);
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_line_to(cr, xn, yn);
+    theta = 2*M_PI * (2/3.0); x = sin(theta); y = cos(theta);
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_line_to(cr, xn, yn);
     cairo_close_path(cr);
 
-    theta = 2*M_PI * (1/3.0);
-    cairo_move_to( cr,  0.1, cos(theta) / 2.0 );
-    cairo_line_to( cr, -0.1, cos(theta) / 2.0 );
-    cairo_line_to( cr, -0.1, cos(theta) );
-    cairo_line_to( cr,  0.1, cos(theta) );
+    theta = 2*M_PI * (1/3.0); x =  0.1; y = cos(theta) / 2.0;
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_move_to(cr, xn, yn);
+    theta = 2*M_PI * (1/3.0); x = -0.1; y = cos(theta) / 2.0;
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_line_to(cr, xn, yn);
+    theta = 2*M_PI * (1/3.0); x = -0.1; y = cos(theta);
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_line_to(cr, xn, yn);
+    theta = 2*M_PI * (1/3.0); x =  0.1; y = cos(theta);
+    xn = x*cos(t) - y*sin(t); yn = x*sin(t) + y*cos(t);
+    cairo_line_to(cr, xn, yn);
     cairo_close_path(cr);
 
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
