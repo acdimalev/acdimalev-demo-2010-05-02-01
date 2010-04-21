@@ -59,6 +59,13 @@ int main(int argc, char **argv) {
     cairo_line_to( cr, sin(theta), cos(theta) );
     cairo_close_path(cr);
 
+    theta = 2*M_PI * (1/3.0);
+    cairo_move_to( cr,  0.1, cos(theta) / 2.0 );
+    cairo_line_to( cr, -0.1, cos(theta) / 2.0 );
+    cairo_line_to( cr, -0.1, cos(theta) );
+    cairo_line_to( cr,  0.1, cos(theta) );
+    cairo_close_path(cr);
+
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_fill(cr);
 
