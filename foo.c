@@ -8,6 +8,20 @@ int w = 320;
 int h = 240;
 float scale = 16.0;
 
+void mat_id(float *mat) {
+  mat[0] = 1; mat[1] = 0; mat[2] = 0;
+  mat[3] = 0; mat[4] = 1; mat[5] = 0;
+  mat[6] = 0; mat[7] = 0; mat[8] = 1;
+}
+
+void vmmul(float *vert, float *mat) {
+  float x, y, z;
+  x = vert[0] * mat[0] + vert[1] * mat[1] + vert[2] * mat[2];
+  y = vert[0] * mat[3] + vert[1] * mat[4] + vert[2] * mat[5];
+  z = vert[0] * mat[6] + vert[1] * mat[7] + vert[2] * mat[8];
+  vert[0] = x; vert[1] = y; vert[2] = z;
+}
+
 int main(int argc, char **argv) {
   SDL_Surface *sdl_surface;
   cairo_surface_t *surface;
@@ -22,7 +36,7 @@ int main(int argc, char **argv) {
 
   float pos[3], vel[3];
 
-  float vertx, verty, tempx, tempy;
+  float vert[3], mat[3 * 3];
 
   int running;
 
@@ -67,36 +81,33 @@ int main(int argc, char **argv) {
     cairo_paint(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
-    theta = 2*M_PI * (0/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_move_to(cr, vertx, verty);
-    theta = 2*M_PI * (1/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_line_to(cr, vertx, verty);
-    theta = 2*M_PI * (2/3.0); tempx = sin(theta); tempy = cos(theta);
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_line_to(cr, vertx, verty);
+    mat_id(mat);
+    mat[0] = cos(t); mat[1] = -sin(t); mat[2] = pos[0];
+    mat[3] = sin(t); mat[4] =  cos(t); mat[5] = pos[1];
+
+    theta = 2*M_PI * (0/3.0);
+    vert[0] = sin(theta); vert[1] = cos(theta); vert[2] = 1; vmmul(vert, mat);
+    cairo_move_to(cr, vert[0], vert[1]);
+    theta = 2*M_PI * (1/3.0);
+    vert[0] = sin(theta); vert[1] = cos(theta); vert[2] = 1; vmmul(vert, mat);
+    cairo_line_to(cr, vert[0], vert[1]);
+    theta = 2*M_PI * (2/3.0);
+    vert[0] = sin(theta); vert[1] = cos(theta); vert[2] = 1; vmmul(vert, mat);
+    cairo_line_to(cr, vert[0], vert[1]);
     cairo_close_path(cr);
 
-    theta = 2*M_PI * (1/3.0); tempx =  0.1; tempy = cos(theta) / 2.0;
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_move_to(cr, vertx, verty);
-    theta = 2*M_PI * (1/3.0); tempx = -0.1; tempy = cos(theta) / 2.0;
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_line_to(cr, vertx, verty);
-    theta = 2*M_PI * (1/3.0); tempx = -0.1; tempy = cos(theta);
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_line_to(cr, vertx, verty);
-    theta = 2*M_PI * (1/3.0); tempx =  0.1; tempy = cos(theta);
-    vertx = pos[0] + tempx*cos(t) - tempy*sin(t);
-    verty = pos[1] + tempx*sin(t) + tempy*cos(t);
-    cairo_line_to(cr, vertx, verty);
+    theta = 2*M_PI * (1/3.0);
+    vert[0] =  0.1; vert[1] = cos(theta) / 2.0; vert[2] = 1; vmmul(vert, mat);
+    cairo_move_to(cr, vert[0], vert[1]);
+    theta = 2*M_PI * (1/3.0);
+    vert[0] = -0.1; vert[1] = cos(theta) / 2.0; vert[2] = 1; vmmul(vert, mat);
+    cairo_line_to(cr, vert[0], vert[1]);
+    theta = 2*M_PI * (1/3.0);
+    vert[0] = -0.1; vert[1] = cos(theta); vert[2] = 1; vmmul(vert, mat);
+    cairo_line_to(cr, vert[0], vert[1]);
+    theta = 2*M_PI * (1/3.0);
+    vert[0] =  0.1; vert[1] = cos(theta); vert[2] = 1; vmmul(vert, mat);
+    cairo_line_to(cr, vert[0], vert[1]);
     cairo_close_path(cr);
 
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
