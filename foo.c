@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
   taccel = 4;
   tdrag = 63/64.0;
-  accel = 1 << 7;
+  accel = 1 << 5;
   drag = 63/64.0;
 
   SDL_LockSurface(sdl_surface);
@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
     cairo_paint(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
+    // Object Translation
     mat_id(mat);
     mat[0] = cos(t); mat[1] = -sin(t); mat[2] = pos[0];
     mat[3] = sin(t); mat[4] =  cos(t); mat[5] = pos[1];
@@ -138,8 +139,8 @@ int main(int argc, char **argv) {
       tvel = tvel - taccel*2*M_PI / fps;
     }
     if (keystate[SDLK_UP]) {
-      vel[0] = accel * -sin(t) / fps;
-      vel[1] = accel * cos(t) / fps;
+      vel[0] = vel[0] + accel * -sin(t) / fps;
+      vel[1] = vel[1] + accel * cos(t) / fps;
     }
 
     t = t + tvel / fps;
