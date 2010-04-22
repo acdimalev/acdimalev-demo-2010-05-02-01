@@ -4,8 +4,8 @@
 #include <math.h>
 
 int fps = 30;
-int w = 320;
-int h = 240;
+int w = 1280;
+int h =  720;
 float scale = 16.0;
 
 void mat_id(float *mat) {
@@ -36,7 +36,6 @@ int main(int argc, char **argv) {
   float accel, drag;
 
   float pos[3], vel[3];
-
   float vert[3], mat[3 * 3];
 
   int running;
@@ -134,6 +133,9 @@ int main(int argc, char **argv) {
     SDL_JoystickUpdate();
     if (keystate[SDLK_q]) {
       running = 0;
+    }
+    if (keystate[SDLK_f]) {
+      SDL_WM_ToggleFullScreen(sdl_surface);
     }
     if ( keystate[SDLK_LEFT] || SDL_JoystickGetAxis(joystick, 4) < 0 ) {
       tvel = tvel + taccel*2*M_PI / fps;

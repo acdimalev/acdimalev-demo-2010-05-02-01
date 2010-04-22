@@ -25,3 +25,4 @@ The demo will pop up in a window.  You can then use the following controls to ma
 * RIGHT &mdash; turn right
 * UP &mdash; forward
 * Q &mdash; quit
+* F &mdash; toggle fullscreen
