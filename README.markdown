@@ -1,4 +1,4 @@
-![screenshot](screenshot.png)
+![screenshot](http://github.com/acdimalev/acdimalev-demo-2010-04-21-01/raw/master/screenshot.png)
 
 You must have Cairo and SDL installed to build this demo.
 
