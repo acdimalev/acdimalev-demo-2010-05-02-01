@@ -5,7 +5,7 @@
 
 int fps = 30;
 int w = 1280;
-int h =  720;
+int h =  800;
 float scale = 16.0;
 
 void mat_id(float *mat) {
@@ -42,7 +42,10 @@ int main(int argc, char **argv) {
 
   int running;
 
+  int i, j;
+
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
+  SDL_ShowCursor(0);
   SDL_SetVideoMode(w, h, 32, 0);
   sdl_surface = SDL_GetVideoSurface();
   joystick = SDL_JoystickOpen(0);
@@ -58,8 +61,9 @@ int main(int argc, char **argv) {
   cr = cairo_create(surface);
   cairo_surface_destroy(surface);
 
-  cairo_scale(cr, 1, -1);
-  cairo_translate(cr, w/2.0, -h/2.0);
+  cairo_translate(cr, w/2.0, h/2.0);
+  cairo_scale(cr, 9/10.0, -1);
+  //cairo_scale(cr, 1, -1);
 
   cairo_scale(cr, h/scale, h/scale);
 
@@ -139,13 +143,31 @@ int main(int argc, char **argv) {
     if (keystate[SDLK_f]) {
       SDL_WM_ToggleFullScreen(sdl_surface);
     }
-    if ( keystate[SDLK_LEFT] || SDL_JoystickGetAxis(joystick, 4) < 0 ) {
+    i = 0;
+    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
+      if ( SDL_JoystickGetAxis(joystick, j) < 0 ) {
+        i = 1;
+      }
+    }
+    if (keystate[SDLK_LEFT] || i) {
       tvel = tvel + taccel*2*M_PI / fps;
     }
-    if ( keystate[SDLK_RIGHT] || SDL_JoystickGetAxis(joystick, 4) > 0 ) {
+    i = 0;
+    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
+      if ( SDL_JoystickGetAxis(joystick, j) > 0 ) {
+        i = 1;
+      }
+    }
+    if (keystate[SDLK_RIGHT] || i) {
       tvel = tvel - taccel*2*M_PI / fps;
     }
-    if ( keystate[SDLK_UP] || SDL_JoystickGetAxis(joystick, 5) < 0 ) {
+    i = 0;
+    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
+      if ( SDL_JoystickGetAxis(joystick, j+1) < 0 ) {
+        i = 1;
+      }
+    }
+    if (keystate[SDLK_UP] || i) {
       vel[0] = vel[0] + accel * -sin(t) / fps;
       vel[1] = vel[1] + accel *  cos(t) / fps;
     }
