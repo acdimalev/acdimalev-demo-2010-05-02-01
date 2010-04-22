@@ -1,5 +1,9 @@
 ![screenshot](http://github.com/acdimalev/acdimalev-demo-2010-04-21-01/raw/master/screenshot.png)
 
+A C+SDL+Cairo demo.  Navigate a triangle around the screen with simple acceleration and drag physics.
+
+http://github.com/acdimalev/acdimalev-demo-2010-04-21-01
+
 You must have Cairo and SDL installed to build this demo.
 
 * http://cairographics.org
