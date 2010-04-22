@@ -32,6 +32,8 @@ int main(int argc, char **argv) {
   Uint8 *keystate;
   Uint32 next_frame, now;
 
+  float aspect = 1.0 * w/h;
+
   float theta, t, taccel, tvel, tdrag;
   float accel, drag;
 
@@ -154,6 +156,19 @@ int main(int argc, char **argv) {
     tvel = tvel * pow(1.0 - tdrag, 1.0/fps);
     vel[0] = vel[0] * pow(1.0 - drag, 1.0/fps);
     vel[1] = vel[1] * pow(1.0 - drag, 1.0/fps);
+
+    if (pos[0] < -(scale+2)*aspect/2.0) {
+      pos[0] = pos[0] + (scale+2)*aspect;
+    }
+    if (pos[0] >  (scale+2)*aspect/2.0) {
+      pos[0] = pos[0] - (scale+2)*aspect;
+    }
+    if (pos[1] < -(scale+2)/2.0) {
+      pos[1] = pos[1] + (scale+2);
+    }
+    if (pos[1] >  (scale+2)/2.0) {
+      pos[1] = pos[1] - (scale+2);
+    }
 
   }
   SDL_UnlockSurface(sdl_surface);
