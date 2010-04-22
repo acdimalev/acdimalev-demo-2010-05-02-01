@@ -24,6 +24,7 @@ void vmmul(float *vert, float *mat) {
 
 int main(int argc, char **argv) {
   SDL_Surface *sdl_surface;
+  SDL_Joystick *joystick;
   cairo_surface_t *surface;
   cairo_t *cr;
 
@@ -40,9 +41,10 @@ int main(int argc, char **argv) {
 
   int running;
 
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
   SDL_SetVideoMode(w, h, 32, 0);
   sdl_surface = SDL_GetVideoSurface();
+  joystick = SDL_JoystickOpen(0);
 
   /* Initialize Canvas */
   surface = cairo_image_surface_create_for_data(
@@ -129,18 +131,19 @@ int main(int argc, char **argv) {
     /* Game Logic */
     SDL_PumpEvents();
     keystate = SDL_GetKeyState(NULL);
+    SDL_JoystickUpdate();
     if (keystate[SDLK_q]) {
       running = 0;
     }
-    if (keystate[SDLK_LEFT]) {
+    if ( keystate[SDLK_LEFT] || SDL_JoystickGetAxis(joystick, 4) < 0 ) {
       tvel = tvel + taccel*2*M_PI / fps;
     }
-    if (keystate[SDLK_RIGHT]) {
+    if ( keystate[SDLK_RIGHT] || SDL_JoystickGetAxis(joystick, 4) > 0 ) {
       tvel = tvel - taccel*2*M_PI / fps;
     }
-    if (keystate[SDLK_UP]) {
+    if ( keystate[SDLK_UP] || SDL_JoystickGetAxis(joystick, 5) < 0 ) {
       vel[0] = vel[0] + accel * -sin(t) / fps;
-      vel[1] = vel[1] + accel * cos(t) / fps;
+      vel[1] = vel[1] + accel *  cos(t) / fps;
     }
 
     t = t + tvel / fps;
