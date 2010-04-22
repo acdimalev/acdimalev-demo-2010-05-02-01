@@ -26,3 +26,4 @@ The demo will pop up in a window.  You can then use the following controls to ma
 * UP &mdash; forward
 * Q &mdash; quit
 * F &mdash; toggle fullscreen
+* H &mdash; stretch image (corrects aspect ratio when displaying on my HDTV)

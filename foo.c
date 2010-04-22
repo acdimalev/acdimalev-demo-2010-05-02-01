@@ -4,8 +4,8 @@
 #include <math.h>
 
 int fps = 30;
-int w = 1280;
-int h =  800;
+int w = 320;
+int h = 240;
 float scale = 16.0;
 
 void mat_id(float *mat) {
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   float pos[3], vel[3];
   float vert[3], mat[3 * 3];
 
-  int running;
+  int running, hdtvtoggle;
 
   int i, j;
 
@@ -61,11 +61,13 @@ int main(int argc, char **argv) {
   cr = cairo_create(surface);
   cairo_surface_destroy(surface);
 
+  hdtvtoggle = 0;
   cairo_translate(cr, w/2.0, h/2.0);
-  cairo_scale(cr, 9/10.0, -1);
-  //cairo_scale(cr, 1, -1);
-
+  cairo_scale(cr, 1, -1);
   cairo_scale(cr, h/scale, h/scale);
+
+  cairo_rectangle(cr, -scale*aspect/2.0, -scale/2.0, scale*aspect, scale);
+  cairo_clip(cr);
 
   /* Initialize Delay */
   next_frame = 1024.0 / fps;
@@ -135,6 +137,34 @@ int main(int argc, char **argv) {
 
     /* Game Logic */
     SDL_PumpEvents();
+    while ( SDL_PollEvent(&event) ) {
+      switch (event.type) {
+        case SDL_KEYDOWN:
+          switch (event.key.keysym.sym) {
+            case SDLK_h:
+              cairo_identity_matrix (cr);
+              cairo_translate(cr, w/2.0, h/2.0);
+              if (hdtvtoggle) {
+                hdtvtoggle = 0;
+                cairo_scale(cr, 1, -1);
+              } else {
+                hdtvtoggle = 1;
+                cairo_scale(cr, 9/10.0, -1);
+              }
+              cairo_scale(cr, h/scale, h/scale);
+              cairo_reset_clip(cr);
+              cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+              cairo_paint(cr);
+              cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+              cairo_rectangle(cr,
+                -scale*aspect/2.0, -scale/2.0,
+                scale*aspect, scale);
+              cairo_clip(cr);
+              break;
+          }
+          break;
+      }
+    }
     keystate = SDL_GetKeyState(NULL);
     SDL_JoystickUpdate();
     if (keystate[SDLK_q]) {
