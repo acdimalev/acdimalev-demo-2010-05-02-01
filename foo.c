@@ -40,6 +40,8 @@ int main(int argc, char **argv) {
   float pos[3], vel[3];
   float vert[3], mat[3 * 3];
 
+  float steer, gas;
+
   int running, hdtvtoggle;
 
   int i, j;
@@ -173,34 +175,33 @@ int main(int argc, char **argv) {
     if (keystate[SDLK_f]) {
       SDL_WM_ToggleFullScreen(sdl_surface);
     }
-    i = 0;
-    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
-      if ( SDL_JoystickGetAxis(joystick, j) < 0 ) {
-        i = 1;
-      }
-    }
-    if (keystate[SDLK_LEFT] || i) {
-      tvel = tvel + taccel*2*M_PI / fps;
-    }
-    i = 0;
-    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
-      if ( SDL_JoystickGetAxis(joystick, j) > 0 ) {
-        i = 1;
-      }
-    }
-    if (keystate[SDLK_RIGHT] || i) {
-      tvel = tvel - taccel*2*M_PI / fps;
-    }
-    i = 0;
-    for (j = 0; j < SDL_JoystickNumAxes(joystick); j = j + 2) {
-      if ( SDL_JoystickGetAxis(joystick, j+1) < 0 ) {
-        i = 1;
-      }
-    }
-    if (keystate[SDLK_UP] || i) {
-      vel[0] = vel[0] + accel * -sin(t) / fps;
-      vel[1] = vel[1] + accel *  cos(t) / fps;
-    }
+
+    steer = 0;
+    gas   = 0;
+
+    /* Input */
+
+    // Xbox 360 Controller
+    steer = steer - SDL_JoystickGetAxis(joystick, 0) / 32768.0;
+    gas   = gas   + ( SDL_JoystickGetAxis(joystick, 4) / 32768.0 + 1 ) / 2.0;
+
+    // Keyboard
+    steer = steer + keystate[SDLK_LEFT];
+    steer = steer - keystate[SDLK_RIGHT];
+    gas   = gas   + keystate[SDLK_UP];
+
+    /* Normalization */
+
+    if (steer < -1) { steer = -1; }
+    if (steer >  1) { steer =  1; }
+    if (gas   >  1) { gas   =  1; }
+
+    /* Physics */
+
+    tvel = tvel + steer * taccel*2*M_PI / fps;
+
+    vel[0] = vel[0] + gas * accel * -sin(t) / fps;
+    vel[1] = vel[1] + gas * accel *  cos(t) / fps;
 
     t = t + tvel / fps;
     pos[0] = pos[0] + vel[0] / fps;
