@@ -1,8 +1,8 @@
-![screenshot](http://github.com/acdimalev/acdimalev-demo-2010-04-21-01/raw/master/screenshot.png)
+![screenshot](http://github.com/acdimalev/acdimalev-demo-2010-05-02-01/raw/master/screenshot.png)
 
-A C+SDL+Cairo demo.  Navigate a triangle around the screen with simple acceleration and drag physics.
+A C+SDL+Cairo demo.  Test combined joystick / keyboard input.  Based on *acdimalev-demo-2010-04-21-01*.
 
-http://github.com/acdimalev/acdimalev-demo-2010-04-21-01
+http://github.com/acdimalev/acdimalev-demo-2010-05-02-01
 
 You must have Cairo and SDL installed to build this demo.
 
@@ -19,11 +19,12 @@ To build and execute the demo, run "make" and then "./foo".
     $ make
     $ ./foo
 
-The demo will pop up in a window.  You can then use the following controls to manipulate the triangle:
+The demo will pop up in a window, and may be closed with the *q* key.  You can then use the following controls to manipulate the triangle:
 
-* LEFT &mdash; turn left
-* RIGHT &mdash; turn right
-* UP &mdash; forward
-* Q &mdash; quit
-* F &mdash; toggle fullscreen
-* H &mdash; stretch image (corrects aspect ratio when displaying on my HDTV)
+* Keyboard
+** LEFT &mdash; steer left
+** RIGHT &mdash; steer right
+** UP &mdash; gas
+* Xbox 360 Controller
+** Left Thumbstick &mdash; steer
+** Right Trigger &mdash; gas
