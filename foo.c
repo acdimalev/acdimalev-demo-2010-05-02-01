@@ -81,8 +81,8 @@ int main(int argc, char **argv) {
   vel[0] = 0; vel[1] = 0; vel[2] = 0;
   taccel = 4;
   tdrag = 63/64.0;
-  accel = 1 << 5;
-  drag = 63/64.0;
+  accel = 1 << 4;
+  drag = 3/4.0;
 
   SDL_LockSurface(sdl_surface);
   while (running) {
@@ -182,8 +182,10 @@ int main(int argc, char **argv) {
     /* Input */
 
     // Xbox 360 Controller
-    steer = steer - SDL_JoystickGetAxis(joystick, 0) / 32768.0;
-    gas   = gas   + ( SDL_JoystickGetAxis(joystick, 4) / 32768.0 + 1 ) / 2.0;
+    if (joystick) {
+      steer = steer - SDL_JoystickGetAxis(joystick, 0) / 32768.0;
+      gas   = gas   + ( SDL_JoystickGetAxis(joystick, 4) / 32768.0 + 1 ) / 2.0;
+    }
 
     // Keyboard
     steer = steer + keystate[SDLK_LEFT];
